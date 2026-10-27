@@ -54,7 +54,11 @@ module apb_slave
                             end
                             8'h4: reg_date <= pwdata;
                             8'h8: reg_surname <= pwdata;
-                            8'hC: reg_name <= pwdata;
+                            8'hC: begin
+                                reg_name <= pwdata;
+                                // НОВАЯ ФУНКЦИОНАЛЬНОСТЬ (пункт 3): вывод в консоль при записи имени
+                                $display("[APB SLAVE] Write to 0xC: reg_name updated with 0x%h", pwdata);
+                            end
                             default: pslverr <= 1'b1;
                         endcase
                         apb_st <= APB_SETUP;
