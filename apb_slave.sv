@@ -54,7 +54,7 @@ module apb_slave
                             end
                             8'h4: reg_date <= pwdata;
                             8'h8: reg_surname <= pwdata;
-                            8'hC: reg_name <= pwdata;
+                            8'hC: reg_name <= pwdata;// Запись имени Ivan (ASCII)
                             default: pslverr <= 1'b1;
                         endcase
                         apb_st <= APB_SETUP;
