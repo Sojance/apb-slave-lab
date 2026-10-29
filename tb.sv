@@ -44,12 +44,15 @@ module TB;
 
     initial begin
         pclk = 0; presetn = 1'b1; psel = '0; penable = '0; pwrite = '0; paddr = '0; pwdata = '0;
+        
+        // Reset
         repeat (5) @(posedge pclk);
         presetn = 1'b0;
         repeat (5) @(posedge pclk);
         presetn = 1'b1;
         repeat (5) @(posedge pclk);
 
+        $display("\n--- TEST 8 (Logic AAAA/5555) ---");
         apb_write(p_device_offset + 32'h0, 32'h0000_0000);
         apb_read (p_device_offset + 32'h0, data_from_device);
         $display("[TEST 8] Write 0 -> Read: 0x%h (Expect 0xAAAAAAAA)", data_from_device);
@@ -58,12 +61,26 @@ module TB;
         apb_read (p_device_offset + 32'h0, data_from_device);
         $display("[TEST 8] Write 1 -> Read: 0x%h (Expect 0x55555555)", data_from_device);
 
-        apb_write(p_device_offset + 32'h0, 32'h0000_0007);
-        apb_write(p_device_offset + 32'h4, 32'h26102026);
-        apb_write(p_device_offset + 32'h8, 32'h53746570);
-        apb_write(p_device_offset + 32'hC, 32'h4976616E);
+        $display("\n--- TEST 9 (Student Data) ---");
+        // Write data
+        apb_write(p_device_offset + 32'h0, 32'h0000_0007); // Group number 7
+        apb_write(p_device_offset + 32'h4, 32'h26102026);  // Date 26.10.2026
+        apb_write(p_device_offset + 32'h8, 32'h53746570);  // "Step"
+        apb_write(p_device_offset + 32'hC, 32'h4976616E);  // "Ivan"
+
+        // Read back date, surname, name (skipping 0x0 due to AAAA/5555 logic)
+        apb_read(p_device_offset + 32'h4, data_from_device);
+        $display("[TEST 9] Write/Read Date:    0x%h (26.10.2026)", data_from_device);
+        
+        apb_read(p_device_offset + 32'h8, data_from_device);
+        $display("[TEST 9] Write/Read Surname: 0x%h (Step)", data_from_device);
+        
+        apb_read(p_device_offset + 32'hC, data_from_device);
+        $display("[TEST 9] Write/Read Name:    0x%h (Ivan)", data_from_device);
+        $display("[TEST 9] Group number written: 7 (0x0 is used by AAAA/5555 logic)");
 
         repeat (10) @(posedge pclk);
+        $display("\nSimulation finished successfully.\n");
         $stop();
     end
 endmodule
