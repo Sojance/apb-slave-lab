@@ -21,6 +21,7 @@ module apb_master (
     end
 
     // Задача записи по шине APB
+    // Раньше было 2 файла, теперь с отдельным мастером их 3 
     task apb_write(input [31:0] addr, input [31:0] data);
         wait ((penable == 0) && (pready == 0));
         @(posedge pclk);
